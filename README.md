@@ -27,6 +27,8 @@ dcu2pas abc.dcu
 dcu2pas abc.dcu xyz.dcu
 # decompile glob files to pas
 dcu2pas abc*.dcu
+# decompile all subdirectories' dcu to pas
+dcu2pas src/**/*.dcu
 ```
 
 ## colorful output

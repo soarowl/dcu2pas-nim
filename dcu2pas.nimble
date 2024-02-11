@@ -12,7 +12,9 @@ bin           = @["dcu2pas"]
 
 # Dependencies
 
-requires "nim >= 2.0.2, cligen >= 1.6.18"
+requires "cligen >= 1.6.18"
+requires "glob >= 0.11.3"
+requires "nim >= 2.0.2"
 
 const
     options = "-d:release --passL:-static"

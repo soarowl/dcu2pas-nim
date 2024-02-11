@@ -1,10 +1,12 @@
-import std/strformat
 import config
+import glob
+import std/strformat
 
 const revision = staticExec("git rev-parse --short HEAD")
 
 proc dcu2pas(files: seq[string], v = false): void =
   ##[ Decompile dcu(Delphi Compiled Unit) to pas. ]##
+
   if v:
     echo pkgDescription
     echo fmt"Author:      {pkgAuthor}"
@@ -12,8 +14,9 @@ proc dcu2pas(files: seq[string], v = false): void =
     echo fmt"Compiled at: {CompileDate}  {CompileTime}"
     return
 
-  for file in files:
-    echo fmt"Processing file: {file}"
+  for pattern in files:
+    for file in walkGlob(pattern):
+      echo fmt"Processing: {file}"
 
 when isMainModule:
   import cligen
