@@ -13,6 +13,7 @@ bin           = @["dcu2pas"]
 # Dependencies
 
 requires "cligen >= 1.6.18"
+requires "binarylang"
 requires "glob >= 0.11.3"
 requires "nim >= 2.0.2"
 

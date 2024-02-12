@@ -1,4 +1,5 @@
 import config
+import dcu
 import glob
 import std/strformat
 
@@ -17,6 +18,9 @@ proc dcu2pas(files: seq[string], v = false): void =
   for pattern in files:
     for file in walkGlob(pattern):
       echo fmt"Processing: {file}"
+      var dcu = newDcu(file)
+      dcu.decompile()
+      dcu.close()
 
 when isMainModule:
   import cligen
