@@ -14,7 +14,7 @@ proc close*(d: Dcu): void =
   d.stream.close()
 
 proc decompile*(d: var Dcu): void =
-  let (dir, name, ext) = splitFile(d.filename)
+  let (_, name, _) = splitFile(d.filename)
   d.name = name
   let content =
     fmt"""unit {d.name};
@@ -25,7 +25,4 @@ implementation
   
 end.
 """
-  if dir != "":
-    writeFile(fmt"{dir}/{name}{ext}.pas", content)
-  else:
-    writeFile(fmt"{name}{ext}.pas", content)
+  writeFile(fmt"{d.filename}.pas", content)
