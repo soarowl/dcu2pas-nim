@@ -91,4 +91,4 @@ proc `$`*(h: DcuHeader): string =
 // Platform: {h.platform.plateformToStr}
 // size: {h.size} bytes
 // timestamp: {h.timestamp}
-// crc: {h.crc}"""
+// crc: ${h.crc:08X}"""
