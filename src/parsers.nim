@@ -1,5 +1,5 @@
 import binarylang
-import std/strformat
+import std/[strformat, times]
 
 type
   Compiler* = enum
@@ -41,14 +41,14 @@ type
 
 proc compilerToStr*(c: uint8): string =
   try:
-    let compiler = Compiler(c)
+    let compiler = c.Compiler
     return $compiler
   except Exception:
     return "Unknown Compiler"
 
 proc plateformToStr*(p: uint8): string =
   try:
-    let plateform = Platform(p)
+    let plateform = p.Platform
     return $plateform
   except Exception:
     return "Unknown Platform"
@@ -69,6 +69,27 @@ struct(timeStamp, endian = l, bitEndian = r):
 
 proc `$`*(t: TimeStamp): string =
   fmt"{t.year + 1980:04d}-{t.month:02d}-{t.day:02d} {t.hour:02d}:{t.minute:02d}:{t.second * 2:02d}"
+
+proc toDateTime*(t: TimeStamp): DateTime =
+  result = dateTime(
+    (t.year + 1980).int,
+    t.month.Month,
+    t.day.MonthdayRange,
+    t.hour.HourRange,
+    t.minute.MinuteRange,
+    (t.second * 2).SecondRange,
+  )
+
+proc toTimeStamp*(dt: DateTime): TimeStamp =
+  let year = dt.year - 1980
+  result = TimeStamp(
+    year: year.uint8,
+    month: dt.month.uint8,
+    day: dt.monthday.uint8,
+    hour: dt.hour.uint8,
+    minute: dt.minute.uint8,
+    second: dt.second.uint8 div 2,
+  )
 
 struct(dcuHeader, endian = l, bitEndian = r):
   u8:
