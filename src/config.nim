@@ -1,4 +1,4 @@
-import std/strformat
+import std/[strformat, strutils]
 
 const
   pkgVersion* = "0.1.0"
@@ -12,11 +12,12 @@ const
 Author:      {pkgAuthor}
 Version:     {pkgVersion}-{revision}
 Compiled at: {compiledAt}"""
+  fence* = "/".repeat(80)
   decompiledHeader* =
     fmt"""
-//////////////////////////////////////////////
+{fence}
 // {pkgDescription}
 // Author:      {pkgAuthor}
 // Version:     {pkgVersion}-{revision}
 // Compiled at: {compiledAt}
-//////////////////////////////////////////////"""
+{fence}"""
