@@ -18,9 +18,7 @@ proc decompile*(d: var Dcu): void =
   let (_, name, _) = splitFile(d.filename)
   d.name = name
   let content =
-    fmt"""{{
-{copyright}
-}}
+    fmt"""{decompiledHeader}
 
 unit {d.name};
 

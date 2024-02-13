@@ -12,3 +12,11 @@ const
 Author:      {pkgAuthor}
 Version:     {pkgVersion}-{revision}
 Compiled at: {compiledAt}"""
+  decompiledHeader* =
+    fmt"""
+//////////////////////////////////////////////
+// {pkgDescription}
+// Author:      {pkgAuthor}
+// Version:     {pkgVersion}-{revision}
+// Compiled at: {compiledAt}
+//////////////////////////////////////////////"""
