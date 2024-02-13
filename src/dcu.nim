@@ -1,4 +1,5 @@
 import binarylang
+import config
 import std/[strformat, os]
 
 type Dcu = ref object of RootObj
@@ -17,12 +18,16 @@ proc decompile*(d: var Dcu): void =
   let (_, name, _) = splitFile(d.filename)
   d.name = name
   let content =
-    fmt"""unit {d.name};
+    fmt"""{{
+{copyright}
+}}
+
+unit {d.name};
 
 interface
-  
+
 implementation
-  
+
 end.
 """
   writeFile(fmt"{d.filename}.pas", content)
