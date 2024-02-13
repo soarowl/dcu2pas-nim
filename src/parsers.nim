@@ -39,6 +39,20 @@ type
     Android64_87 = (0x87, "Android64")
     iOSDevice32_94 = (0x94, "iOSDevice64")
 
+proc compilerToStr*(c: uint8): string =
+  try:
+    let compiler = Compiler(c)
+    return $compiler
+  except Exception:
+    return "Unknown Compiler"
+
+proc plateformToStr*(p: uint8): string =
+  try:
+    let plateform = Platform(p)
+    return $plateform
+  except Exception:
+    return "Unknown Platform"
+
 struct(timeStamp, endian = l, bitEndian = r):
   u5:
     second
@@ -73,8 +87,8 @@ struct(dcuHeader, endian = l, bitEndian = r):
     crc
 
 proc `$`*(h: DcuHeader): string =
-  fmt"""// Compiler: {Compiler(h.compiler)}
-// Platform: {Platform(h.platform)}
+  fmt"""// Compiler: {h.compiler.compilerToStr}
+// Platform: {h.platform.plateformToStr}
 // size: {h.size} bytes
 // timestamp: {h.timestamp}
 // crc: {h.crc}"""
