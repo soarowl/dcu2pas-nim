@@ -113,3 +113,7 @@ proc `$`*(h: DcuHeader): string =
 // size: {h.size} bytes
 // timestamp: {h.timestamp}
 // crc: ${h.crc:08X}"""
+
+struct(dcuBody, endian = l, bitEndian = r):
+  u8:
+    _ = 0

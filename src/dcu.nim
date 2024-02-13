@@ -8,6 +8,7 @@ type Dcu = ref object of RootObj
   stream: BitStream
   name: string
   header: DcuHeader
+  body: DcuBody
 
 proc newDcu*(filename: string): Dcu =
   result = Dcu(filename: filename)
@@ -21,6 +22,7 @@ proc decompile*(d: var Dcu): void =
   d.name = name
 
   d.header = dcuHeader.get(d.stream)
+  d.body = dcuBody.get(d.stream)
 
   let content =
     fmt"""{decompiledHeader}
