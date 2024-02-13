@@ -53,8 +53,32 @@ proc plateformToStr*(p: uint8): string =
   except Exception:
     return "Unknown Platform"
 
+template addGet(parse, parsed, output, n: untyped) =
+  parse
+  output = parsed + n
+
+template addPut(encode, encoded, output, n: untyped) =
+  output = encoded - n
+  encode
+
+template mulGet(parse, parsed, output, n: untyped) =
+  parse
+  output = parsed * n
+
+template mulPut(encode, encoded, output, n: untyped) =
+  output = encoded div n
+  encode
+
+template uint8ToIntGet(parse, parsed, output) =
+  parse
+  output = parsed.int
+
+template uint8ToIntPut(encode, encoded, output) =
+  output = encoded.uint8
+  encode
+
 struct(timeStamp, endian = l, bitEndian = r):
-  u5:
+  u5 {mul(2)}:
     second
   u6:
     minute
@@ -64,31 +88,26 @@ struct(timeStamp, endian = l, bitEndian = r):
     day
   u4:
     month
-  u7:
+  u7 {uint8ToInt[int], add(1980)}:
     year
 
 proc `$`*(t: TimeStamp): string =
-  fmt"{t.year + 1980:04d}-{t.month:02d}-{t.day:02d} {t.hour:02d}:{t.minute:02d}:{t.second * 2:02d}"
+  fmt"{t.year:04d}-{t.month:02d}-{t.day:02d} {t.hour:02d}:{t.minute:02d}:{t.second:02d}"
 
 proc toDateTime*(t: TimeStamp): DateTime =
   result = dateTime(
-    (t.year + 1980).int,
-    t.month.Month,
-    t.day.MonthdayRange,
-    t.hour.HourRange,
-    t.minute.MinuteRange,
-    (t.second * 2).SecondRange,
+    t.year, t.month.Month, t.day.MonthdayRange, t.hour.HourRange, t.minute.MinuteRange,
+    t.second.SecondRange
   )
 
 proc toTimeStamp*(dt: DateTime): TimeStamp =
-  let year = dt.year - 1980
   result = TimeStamp(
-    year: year.uint8,
+    year: dt.year,
     month: dt.month.uint8,
     day: dt.monthday.uint8,
     hour: dt.hour.uint8,
     minute: dt.minute.uint8,
-    second: dt.second.uint8 div 2,
+    second: dt.second.uint8,
   )
 
 struct(dcuHeader, endian = l, bitEndian = r):
