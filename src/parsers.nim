@@ -39,7 +39,24 @@ type
     Android64_87 = (0x87, "Android64")
     iOSDevice32_94 = (0x94, "iOSDevice64")
 
-struct(dcuHeader):
+struct(timeStamp, endian = l, bitEndian = r):
+  u5:
+    second
+  u6:
+    minute
+  u5:
+    hour
+  u5:
+    day
+  u4:
+    month
+  u7:
+    year
+
+proc `$`*(t: TimeStamp): string =
+  fmt"{t.year + 1980:04d}-{t.month:02d}-{t.day:02d} {t.hour:02d}:{t.minute:02d}:{t.second * 2:02d}"
+
+struct(dcuHeader, endian = l, bitEndian = r):
   u8:
     major
   u8:
@@ -50,7 +67,7 @@ struct(dcuHeader):
     compiler
   lu32:
     size
-  lu32:
+  *timeStamp:
     timestamp
   lu32:
     crc
