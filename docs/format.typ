@@ -1,4 +1,4 @@
-#import "@preview/gentle-clues:0.4.0": *
+#import "@preview/gentle-clues:0.6.0": *
 #import "@preview/tbl:0.0.4"
 
 #set heading(numbering: "1.1")
@@ -51,7 +51,7 @@ _
 + LSB: 01: 14 bit signed int
 + LSB: 011: 21 bit signed int
 + LSB: 0111: 28 bit signed int
-+ LSB: 1111: 32 bit signed int
++ LSB: 101_1111: 32 bit signed int
 + LSB: 1111_1111: 64 bit signed int
 
 == Packed Unsigned Int(PU)
@@ -60,7 +60,7 @@ _
 + LSB: 01: 14 bit unsigned int
 + LSB: 011: 21 bit unsigned int
 + LSB: 0111: 28 bit unsigned int
-+ LSB: 1111: 32 bit unsigned int
++ LSB: 101_1111: 32 bit unsigned int
 + LSB: 1111_1111: 64 bit unsigned int
 
 = Header
@@ -266,7 +266,17 @@ On request, also the target platform, which is found in the second byte of the .
 
 == 00 Start flag
 
-== 02 Unit Compile Flags
+== 02 Unit Compile Flags(>= Delphi7)
+
+```
+02 06 55 45 6D 70 74 79 | FE | 27 FE EF 03 (Win64)
+      UEmpty
+02 15 49 53 42 61 73 65 36 34 41 6E 64 45 6E 63 72 79 70 74 69 6F 6E | FE 27 FE E7 03 (Win32)
+02 15 49 53 42 61 73 65 36 34 41 6E 64 45 6E 63 72 79 70 74 69 6F 6E | FE 13 FF F7
+02 15 49 53 42 61 73 65 36 34 41 6E 64 45 6E 63 72 79 70 74 69 6F 6E | FE 89 3F (>= Delphi2009)
+02 15 49 53 42 61 73 65 36 34 41 6E 64 45 6E 63 72 79 70 74 69 6F 6E (Delphi2006, Delphi2007)
+02 (Delphi7)
+```
 
 ```tbl
     R L L Lx
@@ -275,8 +285,8 @@ _
 Offset|Name|Type|Notes
 _
 0 | id | Id | Unit Name
-? | ? | PI |
-? | ? | PI |
+? | ? | PU |
+? | ? | PU |
 _
 ```
 
@@ -284,7 +294,84 @@ _
 
 == 14
 
+== 20 Variable Information
+
+- Delph6
+
+```
+20 02 2E 31 | 66 0E 00
+      .1
+```
+
+== 25 Const Defination
+
+- Delphi12
+
+```
+25 0E 4E 75 6C 6C 4F 62 6A 65 63 74 46 6C 61 67 | 0A 00 00 30 00 00 FB FF 07
+
+25 11 4F 62 6A 52 65 67 4D 65 74 61 46 69 6C 65 4F 62 6A | 0A 00 00 32 00 00 63 5B 01
+
+25 0D 4F 62 6A 52 65 67 49 63 6F 6E 4F 62 6A | 0A 00 00 32 00 00 6B 5B 01
+```
+
+== 28 Function
+
+- Delph6
+
+```
+28 07 41 6E 73 69 43 68 72 | 80 D6 81 0A C4 00 02 04 04 | 21 03 56 61 6C | 16 02 00 | 20 06 52 65 73 75 6C 74 | 16 04 00 | 63
+
+28 17 47 65 74 45 6E 76 69 72 6F 6E 6D 65 6E 74 56 61 72 69 61 62 6C 65 41 | 80 0C 8D FD 18 00 24 09 40 0A | 21 04 4E 61 6D 65 12 0A 06 | 23 06 52 65 73 75 6C 74 16 0A 08 | 63
+```
+
+- Delphi12
+
+```
+28 0C 46 69 6E 61 6C 69 7A 61 74 69 6F 6E | 80 00 00 E9 60 70 C5 00 1E 04 21 90 04 00 | 63
+```
+
+End with 63
+
+=== 20 Result
+
+- Delphi6
+
+```
+20 06 52 65 73 75 6C 74 | 16 04 00
+```
+
+=== 21 Parameter
+
+- Delph6
+
+```
+21 03 56 61 6C | 16 02 00
+21 04 4E 61 6D 65 | 12 0A 06
+```
+
+=== 23 Result
+
+- Delph6
+
+```
+23 06 52 65 73 75 6C 74 | 16 0A 08
+```
+
 == 35 String Const Defination
+
+- Delphi12
+
+```
+35 06 55 45 6D 70 74 79 | 84 00 00 5F B8 8E CF 02 | 63
+      UEmpty
+35 06 53 79 73 74 65 6D | 00 00 00 04 | 63
+      System
+35 08 53 79 73 55 74 69 6C 73 | 80 00 00 00 00 00 00 56 | 63
+      SysUtils
+35 07 43 6C 61 73 73 65 73 | 80 00 00 00 00 00 00 4C | 63 | 63
+      Classes
+```
 
 ```tbl
     R L L Lx
@@ -293,22 +380,39 @@ _
 Offset|Name|Type|Notes
 _
 0 | id | Id | Unit name
-? | ? | PU |
-? | ? | PU |
-? | ? | PU |
-? | ? | PU |
+? | flag | PU |
 _
 ```
 
-End with 63 tag.
+Optional end with multiple 63 tags.
 
-== 37
+== 37 Variable Information(Same as 20)
+
+- Delphi12
+
+```
+37 02 2E 31 | 66 00 00 02 00
+      .1
+37 02 2E 31 | 46 00 00 2E 00
+```
 
 == 61 All File End Flag
 
 == 63 End of Any
 
-== 64 Global Use Unit
+== 64 Interface Use Unit | 65 Implementation Use Unit
+
+- Delphi6
+
+```
+64 07 53 79 73 49 6E 69 74 | C8 | 43 D2 EF | 63
+```
+
+- Delphi12
+
+```
+64 07 53 79 73 49 6E 69 74 | 00 00 00 | 63
+```
 
 ```tbl
     R L L Lx
@@ -325,9 +429,39 @@ _
 
 An unit have many const, procedures and types, end with 63 tag.
 
-== 67
+=== 66 (Import Type)
+
+- Delph6
+
+```
+66 04 42 79 74 65 | DD DE 52 6C
+```
+
+=== 67 (Import Function)
+
+- Delphi6
+
+```
+67 0E 40 48 61 6E 64 6C 65 46 69 6E 61 6C 6C 79 | 58 2C 54 64
+```
+
+- Delphi12
+
+```
+67 17 40 44 65 6C 70 68 69 45 78 63 65 70 74 69 6F 6E 48 61 6E 64 6C 65 72 | C8 7E 90 F4
+
+67 0F 40 44 79 6E 41 72 72 61 79 4C 65 6E 67 74 68 | 98 D6 54 70 9F F0 58 BE C2
+
+67 08 40 4C 53 74 72 4C 65 6E | B1 D9 99 A8 9F 19 5C 34 F0
+```
 
 == 70 | 76 Source File Name
+
+```
+70 0A 55 45 6D 70 74 79 2E 70 61 73 | 35 7F 91 57 | 00
+
+70 3D 2E 2E 5C 2E 2E 5C 44 65 6C 70 68 69 20 33 5F 35 20 53 6F 75 72 63 65 20 43 6F 64 65 5C 4C 69 62 72 61 72 79 56 33 5C 49 53 44 65 6C 70 68 69 32 30 30 39 41 64 6A 75 73 74 2E 70 61 73 | 0C 75 77 3D | 00
+```
 
 ```tbl
     R L L Lx
@@ -342,6 +476,17 @@ _
 ```
 
 == 96 Unit Flag
+- Delphi6
+
+```
+96 00 3C
+```
+
+- Delphi12
+
+```
+96 00 00 3C
+```
 
 ```tbl
     R L L Lx
