@@ -78,6 +78,186 @@ template uint8ToIntPut(encode, encoded, output) =
   output = encoded.uint8
   encode
 
+struct(u7, endian = l, bitEndian = r):
+  u1:
+    flag = 0
+  u7:
+    value
+
+struct(u14, endian = l, bitEndian = r):
+  u2:
+    flag = 0b01
+  u14:
+    value
+
+struct(u21, endian = l, bitEndian = r):
+  u3:
+    flag = 0b011
+  u21:
+    value
+
+struct(u28, endian = l, bitEndian = r):
+  u4:
+    flag = 0b0111
+  u28:
+    value
+
+struct(u32, endian = l, bitEndian = r):
+  u8:
+    flag = 0x5F
+  lu32:
+    value
+
+struct(u64, endian = l, bitEndian = r):
+  u8:
+    flag = 0xFF
+  lu64:
+    value
+
+struct(i7, endian = l, bitEndian = r):
+  u1:
+    flag = 0
+  7:
+    value
+
+struct(i14, endian = l, bitEndian = r):
+  u2:
+    flag = 0b01
+  14:
+    value
+
+struct(i21, endian = l, bitEndian = r):
+  u3:
+    flag = 0b011
+  21:
+    value
+
+struct(i28, endian = l, bitEndian = r):
+  u4:
+    flag = 0b0111
+  28:
+    value
+
+struct(i32, endian = l, bitEndian = r):
+  u8:
+    flag = 0x5F
+  l32:
+    value
+
+struct(i64, endian = l, bitEndian = r):
+  u8:
+    flag = 0xFF
+  l64:
+    value
+
+type
+  PackedUInt* = uint64
+  PackedInt* = int64
+
+proc getPackedUInt(s: BitStream): PackedUInt =
+  let u8 = s.readU8()
+  s.setPosition(s.getPosition() - 1)
+
+  if (u8 and 0b1) == 0:
+    let u = u7.get(s)
+    echo u
+    return u.value
+  if (u8 and 0b11) == 0b01:
+    let u = u14.get(s)
+    echo u
+    return u.value
+  if (u8 and 0b111) == 0b011:
+    let u = u21.get(s)
+    echo u
+    return u.value
+  if (u8 and 0b1111) == 0b0111:
+    let u = u28.get(s)
+    echo u
+    return u.value
+  if u8 == 0x5F:
+    let u = u32.get(s)
+    echo u
+    return u.value
+  if u8 == 0xFF:
+    let u = u64.get(s)
+    echo u
+    return u.value
+
+proc putPackedUInt(s: BitStream, input: PackedUInt) =
+  if input <= 127:
+    let u = U7(flag: 0b0, value: input.uint8)
+    u7.put(s, u)
+  elif input <= 16383:
+    let u = U14(flag: 0b01, value: input.uint16)
+    u14.put(s, u)
+  elif input <= 2097151:
+    let u = U21(flag: 0b011, value: input.uint32)
+    u21.put(s, u)
+  elif input <= 268435455:
+    let u = U28(flag: 0b0111, value: input.uint32)
+    u28.put(s, u)
+  elif input <= 4294967295.uint64:
+    let u = U32(flag: 0x5F, value: input.uint32)
+    u32.put(s, u)
+  else:
+    let u = U64(flag: 0xFF, value: input.uint64)
+    u64.put(s, u)
+
+let packedUIntParser* = (get: getPackedUInt, put: putPackedUInt)
+
+proc getPackedInt(s: BitStream): PackedInt =
+  let u8 = s.readU8()
+  s.setPosition(s.getPosition() - 1)
+
+  if (u8 and 0b1) == 0:
+    let ii = i7.get(s)
+    echo ii
+    return ii.value
+  if (u8 and 0b11) == 0b01:
+    let ii = i14.get(s)
+    echo ii
+    return ii.value
+  if (u8 and 0b111) == 0b011:
+    let ii = i21.get(s)
+    echo ii
+    return ii.value
+  if (u8 and 0b1111) == 0b0111:
+    let ii = i28.get(s)
+    echo ii
+    return ii.value
+  if u8 == 0x5F:
+    let ii = i32.get(s)
+    echo ii
+    return ii.value
+  if u8 == 0xFF:
+    let ii = i64.get(s)
+    echo ii
+    return ii.value
+
+proc putPackedInt(s: BitStream, input: PackedInt) =
+  if input >= -64 and input <= 63:
+    let ii = I7(flag: 0b0, value: input.int8)
+    echo ii
+    i7.put(s, ii)
+  elif input >= -8192 and input <= 8191:
+    let ii = I14(flag: 0b01, value: input.int16)
+    echo ii
+    i14.put(s, ii)
+  elif input >= -2097152 and input <= 2097151:
+    let ii = I21(flag: 0b011, value: input.int32)
+    i21.put(s, ii)
+  elif input >= -268435456 and input <= 268435455:
+    let ii = I28(flag: 0b0111, value: input.int32)
+    i28.put(s, ii)
+  elif input >= -4294967296 and input <= 4294967295:
+    let ii = I32(flag: 0x5F, value: input.int32)
+    i32.put(s, ii)
+  else:
+    let ii = I64(flag: 0xFF, value: input.int64)
+    i64.put(s, ii)
+
+let packedIntParser* = (get: getPackedInt, put: putPackedInt)
+
 struct(timeStamp, endian = l, bitEndian = r):
   u5 {mul(2)}:
     second
