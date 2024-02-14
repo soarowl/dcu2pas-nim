@@ -1,6 +1,6 @@
 import config
-import dcu
 import glob
+import parsers
 import std/strformat
 
 proc dcu2pas(files: seq[string], v = false): void =
