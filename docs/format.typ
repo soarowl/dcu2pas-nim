@@ -266,7 +266,7 @@ On request, also the target platform, which is found in the second byte of the .
 
 == 00 Start flag
 
-== 02 Unit Compile Flags(>= Delphi7)
+== 02 Unit Addtional Info(>= Delphi7)
 
 ```
 02 06 55 45 6D 70 74 79 | FE | 27 FE EF 03 (Win64)
