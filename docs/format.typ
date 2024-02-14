@@ -476,16 +476,18 @@ _
 ```
 
 == 96 Unit Flag
-- Delphi6
+
+- Delphi6, Delphi7
 
 ```
 96 00 3C
 ```
 
-- Delphi12
+- >= Delphi2006
 
 ```
-96 00 00 3C
+96 00 06 3C (Delphi2006)
+96 00 00 3C (Delphi12)
 ```
 
 ```tbl
